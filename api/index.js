@@ -23,6 +23,27 @@ app.get('/values', (_req, res, _next) => {
   });
 });
 
+app.get('/progress', (_req, res, _next) => {
+  res.set({
+    'Access-Control-Allow-Origin': '*',
+    'Cache-Control': 'no-cache',
+    Connection: 'keep-alive',
+    'Content-Type': 'text/event-stream',
+  });
+  res.flushHeaders();
+
+  const interval = setInterval(() => {
+    const item1Status = 'finished';
+    const item2Status = 'finished';
+    res.write(`data: ${JSON.stringify({ item1Status, item2Status })}\n\n`);
+  }, 5000);
+
+  res.on('close', () => {
+    clearInterval(interval);
+    res.end();
+  });
+});
+
 app.listen(4001, 'localhost', () => {
   console.log('Server is up and running at port 4001');
 });
